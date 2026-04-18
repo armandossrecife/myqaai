@@ -24,8 +24,6 @@ Instale as dependências com uv:
 uv pip install -r requirements.txt
 ```
 
----
-
 ## 1. Iniciando o servidor da API (Backend)
 
 Em um terminal com o `.venv` ativado, inicie o backend usando o módulo do python. Ele será executado na porta `8000` por padrão.
@@ -39,7 +37,6 @@ Você verá nos logs que o servidor foi iniciado com sucesso mostrando algo como
 
 A documentação interativa da API também pode ser acessada em [http://localhost:8000/docs](http://localhost:8000/docs).
 
----
 
 ## 2. Iniciando a aplicação Frontend
 
@@ -53,8 +50,6 @@ python frontend/app.py
 ```
 
 A aplicação ficará disponível pelo seu navegador. Pelas configurações padrão, você poderá acessá-la em [http://localhost:5001](http://localhost:5001) (ou porta `5000` via arquivo `.env`).
-
----
 
 ## Notas Adicionais
 - **Banco de Dados**: O banco SQLite é inicializado automaticamente na pasta `data/app.db` na primeira vez que o backend roda.
