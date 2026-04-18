@@ -6,6 +6,24 @@ Para rodá-los localmente, você precisará de dois terminais separados.
 
 ## Pré-requisitos
 
+Arquivo .env
+```bash
+BACKEND_HOST=0.0.0.0
+BACKEND_PORT=8000
+DATABASE_URL=sqlite:///./data/app.db
+JWT_SECRET_KEY=sua_chave_secreta_super_segura
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+FRONTEND_HOST=0.0.0.0
+FRONTEND_PORT=5000
+API_BASE_URL=http://localhost:8000/api/v1
+
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=qwen3
+OLLAMA_TIMEOUT_SECONDS=120
+OLLAMA_MAX_TOKENS=2048
+```
 Crie o venv como uv:
 
 ```bash
