@@ -5,6 +5,7 @@ from typing import Optional
 class AskRequest(BaseModel):
     prompt: str = Field(..., min_length=1, max_length=4000)
     context: Optional[str] = None
+    stream: bool = False
 
 class AskResponse(BaseModel):
     conversation_id: int

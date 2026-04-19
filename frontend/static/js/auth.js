@@ -25,7 +25,9 @@ const Auth = {
                 e.preventDefault();
                 const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
                 const currentTheme = localStorage.getItem('app_theme') || 'dark';
+                const currentStreaming = localStorage.getItem('app_streaming') === 'true';
                 document.getElementById('themeSelect').value = currentTheme;
+                document.getElementById('streamingToggle').checked = currentStreaming;
                 modal.show();
             });
             document.getElementById("btnLogout").addEventListener("click", (e) => {
@@ -49,7 +51,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnSaveSettings) {
         btnSaveSettings.addEventListener('click', () => {
             const theme = document.getElementById('themeSelect').value;
+            const streaming = document.getElementById('streamingToggle').checked;
             localStorage.setItem('app_theme', theme);
+            localStorage.setItem('app_streaming', streaming);
             document.documentElement.setAttribute('data-theme', theme);
             
             // Close modal

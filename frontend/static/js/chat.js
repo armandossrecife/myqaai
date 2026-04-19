@@ -115,6 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
         chatInput.style.height = '56px';
         btnSend.disabled = true;
         
+        // Settings
+        const isStreamingEnabled = localStorage.getItem('app_streaming') === 'true';
+
         // Current Time for optimistic UI
         const now = Utils.formatDate(new Date());
 
@@ -129,25 +132,99 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${Auth.getToken()}`
                 },
-                body: JSON.stringify({ prompt: prompt })
+                body: JSON.stringify({ 
+                    prompt: prompt,
+                    stream: isStreamingEnabled
+                })
             });
 
-            removeTypingIndicator();
-
-            if (res.ok) {
-                const data = await res.json();
-                appendMessage('assistant', data.response, data.timestamp);
-                
-                // Prepend ao histórico na sidebar ao inves de recarregar tudo
-                prependToHistory(data);
-            } else {
+            if (!res.ok) {
+                removeTypingIndicator();
                 if (res.status === 401) Auth.logout();
                 const err = await res.json();
                 appendMessage('assistant', `⚠️ Erro: ${err.detail || 'Serviço indisponível'}`, now);
+                return;
+            }
+
+            if (!isStreamingEnabled) {
+                removeTypingIndicator();
+                const data = await res.json();
+                appendMessage('assistant', data.response, data.timestamp);
+                prependToHistory(data);
+            } else {
+                // Lógica de Streaming (SSE)
+                removeTypingIndicator();
+                
+                // Cria bolha vazia para o assistente
+                const bubble = document.createElement("div");
+                bubble.className = `chat-bubble assistant`;
+                
+                const header = document.createElement("div");
+                header.className = "d-flex justify-content-between mb-1";
+                const sender = document.createElement("span");
+                sender.className = "fw-bold";
+                sender.innerText = "Modelo (Qwen)";
+                const timestampLabel = document.createElement("small");
+                timestampLabel.className = "text-secondary time-label";
+                timestampLabel.style.opacity = "0.7";
+                timestampLabel.innerText = "Processando...";
+                
+                header.appendChild(sender);
+                header.appendChild(timestampLabel);
+                
+                const content = document.createElement("div");
+                content.className = "message-content markdown-body";
+                
+                bubble.appendChild(header);
+                bubble.appendChild(content);
+                chatMessages.appendChild(bubble);
+                scrollToBottom();
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let fullText = "";
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split("\n");
+
+                    for (const line of lines) {
+                        if (line.startsWith("data: ")) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                if (data.error) {
+                                    content.innerText = `⚠️ Erro: ${data.error}`;
+                                    break;
+                                }
+                                
+                                if (data.text) {
+                                    fullText += data.text;
+                                    content.innerHTML = marked.parse(fullText);
+                                    scrollToBottom();
+                                }
+
+                                if (data.done) {
+                                    timestampLabel.innerText = data.timestamp;
+                                    prependToHistory({
+                                        prompt: prompt,
+                                        response: fullText,
+                                        timestamp: data.timestamp
+                                    });
+                                }
+                            } catch (e) {
+                                console.error("Erro ao processar chunk SSE:", e);
+                            }
+                        }
+                    }
+                }
             }
 
         } catch (error) {
             removeTypingIndicator();
+            console.error("Erro na requisição:", error);
             appendMessage('assistant', `⚠️ Erro de rede ao conectar com o serviço.`, now);
         } finally {
             btnSend.disabled = false;
