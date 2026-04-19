@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <h1 class="display-3 mb-4 fw-bold">Bem Vindo à QA AI Platform</h1>
             <p class="lead mb-5 text-secondary">
-                Interaja com o modelo de linguagem TODO: carregar modelo corrente, salve suas conversas e tenha
+                Interaja com o modelo de linguagem <span class="current-model-info fw-bold">LLM</span>, salve suas conversas e tenha
                 respostas
                 incríveis num clique.
             </p>
@@ -25,7 +25,7 @@
                 <div class="col-md-4">
                     <i class="bi bi-lightning-charge display-4 text-warning mb-3"></i>
                     <h4>Poderoso & Veloz</h4>
-                    <p class="text-secondary">Apoiado pelo modelo TODO: carregar modelo corrente.</p>
+                    <p class="text-secondary">Apoiado pelo modelo <span class="current-model-info">LLM</span>.</p>
                 </div>
                 <div class="col-md-4">
                     <i class="bi bi-hdd-network display-4 text-success mb-3"></i>
@@ -36,12 +36,21 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
     // Se o usuário estiver logado na página home, mostra atalho p/ dashboard
     if (localStorage.getItem("jwt_token")) {
-        document.getElementById("cta-buttons").innerHTML = `
-            <a href="/dashboard" class="btn btn-primary btn-lg px-5">Ir para Dashboard <i class="bi bi-chat ms-2"></i></a>
-        `;
+        const cta = document.getElementById("cta-buttons");
+        if (cta) {
+            cta.innerHTML = `
+                <a href="/dashboard" class="btn btn-primary btn-lg px-5">Ir para Dashboard <i class="bi bi-chat ms-2"></i></a>
+            `;
+        }
     }
+
+    // Carrega o nome do modelo
+    Utils.loadModelName();
 </script>
 {% endblock %}

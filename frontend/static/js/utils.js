@@ -41,12 +41,32 @@ const Utils = {
         }
     },
 
-    escapeHtml: (unsafe) => {
+     escapeHtml: (unsafe) => {
         return unsafe
              .replace(/&/g, "&amp;")
              .replace(/</g, "&lt;")
              .replace(/>/g, "&gt;")
              .replace(/"/g, "&quot;")
              .replace(/'/g, "&#039;");
+    },
+
+    loadModelName: async () => {
+        try {
+            const res = await fetch(`${window.APP_CONFIG.API_BASE_URL}/chat/model`);
+            if (res.ok) {
+                const data = await res.json();
+                const modelName = data.model;
+                // Deixa em maiúsculas se for curto (ex: qwen3 -> QWEN3) 
+                // ou apenas capitaliza se preferir
+                const displayModel = modelName.toUpperCase();
+                
+                const elements = document.querySelectorAll('.current-model-info');
+                elements.forEach(el => {
+                    el.textContent = displayModel;
+                });
+            }
+        } catch (error) {
+            console.error("Erro ao carregar nome do modelo:", error);
+        }
     }
 };

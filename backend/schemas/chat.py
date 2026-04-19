@@ -26,3 +26,6 @@ class ConversationsResponse(BaseModel):
     limit: int
     offset: int
     items: list[ConversationItem]
+
+class ModelInfo(BaseModel):
+    model: str

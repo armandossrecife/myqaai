@@ -39,6 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Carregar Histórico
     loadHistory();
 
+    // Carregar Nome do Modelo
+    Utils.loadModelName();
+
     // Cria bolha no DOM
     function appendMessage(role, text, time) {
         if (chatWelcome) chatWelcome.classList.add('d-none');

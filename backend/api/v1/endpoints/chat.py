@@ -2,13 +2,20 @@ import json
 from fastapi import APIRouter, Query, HTTPException, status
 from fastapi.responses import StreamingResponse
 from backend.api.deps import SessionDep, CurrentUser
-from backend.schemas.chat import AskRequest, AskResponse, ConversationsResponse, ConversationItem
+from backend.schemas.chat import AskRequest, AskResponse, ConversationsResponse, ConversationItem, ModelInfo
 from backend.services import conversation_service
 from backend.services.llm_client import generate_response
 from backend.core.config import settings
 from datetime import datetime, timezone
 
 router = APIRouter()
+
+@router.get("/model", response_model=ModelInfo)
+async def get_model_info():
+    """
+    Retorna o nome do modelo LLM configurado no backend.
+    """
+    return ModelInfo(model=settings.OLLAMA_MODEL)
 
 @router.post("/ask")
 async def ask_question(request: AskRequest, current_user: CurrentUser, db: SessionDep):
