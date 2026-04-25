@@ -72,3 +72,7 @@ A aplicação ficará disponível pelo seu navegador. Pelas configurações padr
 ## Notas Adicionais
 - **Banco de Dados**: O banco SQLite é inicializado automaticamente na pasta `data/app.db` na primeira vez que o backend roda.
 - **LLM/Ollama**: Certifique-se de que o serviço do Ollama (`http://localhost:11434`) esteja rodando na sua máquina e com o modelo definido (ex: `qwen3`) baixado para o chat funcionar completamente.
+
+## Mais detalhes 
+
+Detalhes do projeto disponível em https://github.com/armandossrecife/myqaai/blob/main/projeto.md
